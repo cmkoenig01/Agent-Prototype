@@ -211,3 +211,9 @@ publications. Requests use a 10-second timeout and at most one transient-failure
 
 Setup references: [uv installation](https://docs.astral.sh/uv/getting-started/installation/)
 and [uv locking and syncing](https://docs.astral.sh/uv/concepts/projects/sync/).
+
+## Planned development
+
+The [phased roadmap](docs/ROADMAP.md) is a discussion draft for adding a useful
+clinician-facing assistant. Only Phase 1 exists today; later phases are proposals
+to review before changing application code.
