@@ -15,9 +15,8 @@ is [architecture.mmd](docs/architecture.mmd).
 
 ## Get the project
 
-Install **Python 3.13** from [python.org](https://www.python.org/downloads/), and Git
-if needed. The project currently requires Python 3.13, not 3.14 or a system Python 3.9.
-No GPU is required. Run these commands in a terminal:
+Use **uv on both macOS and Windows**, plus Git. No GPU is required. If uv is not
+installed, follow the installation commands below. Clone the project in a terminal:
 
 ```sh
 git clone --branch kush/aim-prototype https://github.com/cmkoenig01/Agent-Prototype.git
@@ -35,47 +34,45 @@ git pull --ff-only
 
 Keep running the commands below from the repo root.
 
-## Setup without uv
+## Setup with uv (macOS and Windows)
 
-### macOS (Terminal, zsh or bash)
+If you already have uv, skip its installation. For a teammate who does not, use the
+[official uv installer](https://docs.astral.sh/uv/getting-started/installation/):
+
+macOS Terminal:
 
 ```sh
-python3.13 --version
-python3.13 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e .
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Windows (PowerShell)
+Windows PowerShell:
 
 ```powershell
-py -3.13 --version
-py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -e .
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-If `py` is unavailable but `python --version` reports 3.13, use `python` in place of
-`py -3.13`. If PowerShell prevents activation, use the no-activation commands below;
-you do not have to change the machine's execution policy.
+Open a new terminal after installing uv. Then, from the repo root, on either platform:
 
-What these steps do:
+```sh
+uv --version
+uv sync --locked
+```
 
-- `-m venv .venv` creates an isolated Python environment in this repo.
-- Activation makes `python` and installed commands use that environment in this terminal.
-- `python -m pip` runs the package installer belonging to that Python environment.
-- `install -e .` installs this local project and its dependencies. The dot means
-  the current directory; `-e` lets edits to `src/` take effect without reinstalling.
+`uv sync --locked` creates or updates **one `.venv`** for this project. It installs
+the application and development tools using `uv.lock`. The project selects Python
+3.13 through `.python-version`; uv can download it if needed. You do not need a
+separate pip installation or a second environment.
 
-When opening a new terminal, activate `.venv` again. Run `deactivate` to leave it.
-If activation is inconvenient, install/run through the environment's Python directly:
+To use the short `aim-pgx` command, activate that same environment:
 
-| Platform | Install, without activation | Run, without activation |
-| --- | --- | --- |
-| macOS | `.venv/bin/python -m pip install -e .` | `.venv/bin/python -m aim_pgx --case examples/both_negative.json` |
-| Windows | `.\.venv\Scripts\python.exe -m pip install -e .` | `.\.venv\Scripts\python.exe -m aim_pgx --case examples/both_negative.json` |
+| Platform | Activate in each new terminal |
+| --- | --- |
+| macOS (zsh/bash) | `source .venv/bin/activate` |
+| Windows (PowerShell) | `.\.venv\Scripts\Activate.ps1` |
+
+Activation just makes this terminal find the commands already installed in `.venv`.
+Run `deactivate` to leave it. If activation is blocked or inconvenient, use the
+`uv run` form explained below; it uses the same environment.
 
 ## Run
 
@@ -110,13 +107,11 @@ The report labels saved evidence as **SNAPSHOT** and shows the original retrieva
 date. Live failures never silently switch to saved evidence. To save a new response,
 add `--save-snapshot snapshots/cpic.json` to a live run. Existing files are not overwritten.
 
-## Optional: use uv for locked dependency versions
+## Running without environment activation
 
-If you already use [uv](https://docs.astral.sh/uv/), you can use this route instead
-of the manual environment setup:
+On either macOS or Windows, this runs the same installed application without activation:
 
 ```sh
-uv sync --locked
 uv run --locked aim-pgx --case examples/both_negative.json
 ```
 
@@ -128,8 +123,7 @@ uv run --locked aim-pgx --case examples/both_negative.json
 | `aim-pgx` | The application being run |
 | `--case examples/both_negative.json` | The input file passed to the application |
 
-The pip route installs compatible versions declared in `pyproject.toml`. The uv route
-uses the exact dependency versions in `uv.lock`. Both run the same application.
+This is a wrapper around the same `aim-pgx` command, not a second installation or mode.
 
 ## Patient inputs and cases
 
@@ -196,19 +190,16 @@ is kept unchanged and is not part of this application's execution path.
 
 ## Checks and evidence sources
 
-With the virtual environment active, install the project's development dependency
-group, then run the checks:
+`uv sync --locked` already installs the development tools. With the environment active:
 
 ```sh
-python -m pip install --group dev
-python -m pytest
-python -m ruff check src tests
-python -m ruff format --check src tests
+pytest
+ruff check src tests
+ruff format --check src tests
 ```
 
-`--group dev` reads the development tools from `pyproject.toml`; upgrade pip as in
-setup if your version does not recognize it. With uv, `uv sync --locked` installs
-that group automatically; use `uv run --locked pytest` and `uv run --locked ruff ...`.
+Without activation, prefix each command with `uv run --locked`, for example
+`uv run --locked pytest`.
 
 Tests run offline. A live assessment is a separate check of CPIC availability.
 Evidence retrieval follows the drug's linked guideline, recommendations, and
@@ -218,6 +209,5 @@ publications. Requests use a 10-second timeout and at most one transient-failure
 - [Carbamazepine/HLA guideline, Table 2](https://pmc.ncbi.nlm.nih.gov/articles/PMC5847474/)
 - [Saved test evidence provenance](tests/fixtures/README.md)
 
-Setup references: [Python virtual environments](https://docs.python.org/3.13/library/venv.html),
-[pip dependency groups](https://pip.pypa.io/en/stable/user_guide/#dependency-groups),
+Setup references: [uv installation](https://docs.astral.sh/uv/getting-started/installation/)
 and [uv locking and syncing](https://docs.astral.sh/uv/concepts/projects/sync/).
