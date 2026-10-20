@@ -1,0 +1,9 @@
+{
+  "case_id": "fictional-unsupported-medication",
+  "age": 34,
+  "medication": "metformin",
+  "first_time_use": true,
+  "hla_b_1502": "unknown",
+  "hla_a_3101": "unknown",
+  "alternatives": "unknown"
+}

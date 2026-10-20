@@ -1,0 +1,26 @@
+---
+title: Current AIM application - Phase 1, no language model
+---
+flowchart LR
+    CASE["Patient JSON<br/>Fictional adult, medication<br/>HLA results and treatment facts"]
+    VALIDATE["Validate input<br/>Required fields and values<br/>Adult + first-time carbamazepine"]
+    EVIDENCE["Read and validate evidence<br/>cpic.py<br/>Preserve source IDs and dates"]
+    MATCH["Match in Python<br/>matching.py<br/>Results + recommendation conditions"]
+    REPORT["Terminal report<br/>Applicable CPIC source text<br/>Missing facts, conditions, sources"]
+    CPIC[("CPIC API<br/>Drug, linked guideline<br/>Recommendations, publications")]
+    SAVED["Saved CPIC response<br/>Only with --snapshot<br/>Original retrieval date shown"]
+    ERROR["Explicit error outcome<br/>No completed finding"]
+
+    CASE --> VALIDATE --> EVIDENCE --> MATCH --> REPORT
+    CPIC -->|Live by default| EVIDENCE
+    SAVED -. "Explicit offline option" .-> EVIDENCE
+    VALIDATE -->|Invalid or unsupported| ERROR
+    EVIDENCE -->|Unavailable or invalid| ERROR
+    MATCH -->|No unique matching record| ERROR
+
+    classDef core fill:#edf5ff,stroke:#2563a6,color:#142c49,stroke-width:1.5px
+    classDef source fill:#eaf7f1,stroke:#237a59,color:#174c39,stroke-width:1.5px
+    classDef fail fill:#fff1ec,stroke:#b75b36,color:#713b26,stroke-width:1.5px
+    class VALIDATE,EVIDENCE,MATCH core
+    class CPIC,SAVED,REPORT source
+    class ERROR fail

@@ -1,0 +1,9 @@
+{
+  "case_id": "fictional-drug-class",
+  "age": 34,
+  "medication": "GLP-1",
+  "first_time_use": true,
+  "hla_b_1502": "unknown",
+  "hla_a_3101": "unknown",
+  "alternatives": "unknown"
+}

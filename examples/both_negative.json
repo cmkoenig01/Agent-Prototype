@@ -1,0 +1,9 @@
+{
+  "case_id": "fictional-both-negative",
+  "age": 28,
+  "medication": "carbamazepine",
+  "first_time_use": true,
+  "hla_b_1502": "negative",
+  "hla_a_3101": "negative",
+  "alternatives": "unknown"
+}
